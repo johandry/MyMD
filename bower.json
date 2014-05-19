@@ -1,0 +1,16 @@
+{
+  "name": "My Movies Dashboard",
+  "description": "A dashboard with my private collection of movies. This dashboard is updated weekly from my movies in iTunes and manually for my movies in DVD & BR",
+  "version": "0.1.0",
+  "homepage": "https://github.com/johandry/",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.x",
+    "angular-route": "1.2.x",
+    "angular-loader": "1.2.x",
+    "angular-mocks": "~1.2.x",
+    "html5-boilerplate": "~4.3.0",
+    "bootstrap": "~3.1.1"
+  }
+}
