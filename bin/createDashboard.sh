@@ -559,7 +559,7 @@ do
   entry ${ID} "${movie}" ${ok_format} ${ok_backup} "${name}" "${artist}" "${main_genre}" "${genres}" "${release_date}" "${description}" "${rating}" "${studio}" "${director}" "${producers}" "${screenwriters}" "${media_kind}" "${movies}" "${artworkPics}"
 
   (( ID++ ))
-done < <(ls "${SOURCE}"/*/* | head -50) 
+done < <(ls "${SOURCE}"/*/*) 
 # Replace above line for: 'done < <(ls "${SOURCE}"/*/* | head -5)' to test with the first 5 movies.
 footers
 
