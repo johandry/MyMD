@@ -254,16 +254,16 @@ entry () {
     "m4v":${ok_format},
     "backup":${ok_backup},
     "artist":"${artist}",
-    "main Genre":"${main_genre}",
+    "mainGenre":"${main_genre}",
     "genres":"${genres}",
-    "release Date":"${release_date}",
+    "releaseDate":"${release_date}",
     "description":"${description}",
     "rating":"${rating}",
     "studio":"${studio}",
     "director":"${director}",
     "producers":"${producers}",
     "screenwriters":"${screenwriters}",
-    "media Kind":"${media_kind}",
+    "mediaKind":"${media_kind}",
     "path":"${path}"
 EOJSONENTRY
 
