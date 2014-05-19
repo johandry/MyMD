@@ -1,0 +1,28 @@
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="col-md-2">
+			<!-- Sidebar -->
+			Search: <input ng-model="query">
+
+			Sort By: 
+			<select ng-model="order">
+				<option value="name">Title</option>
+				<option value="id">Newest</option>
+				<option value="-id">Oldest</option>
+			</select>
+		</div>
+
+		<div class="col-md-10">
+			<!-- Body -->
+			<ul class="movies">
+				<li ng-repeat="movie in movies | filter: query | orderBy: order" class="thumbnail">
+					<a href="#/movies/{{movie.id}}" class="thumb"><img ng-src="{{movie.artwork}}" class="movie"></a>
+					<a href="#/movies/{{movie.id}}">{{movie.name}}</a>
+					<p>{{movie.description}}</p>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+
