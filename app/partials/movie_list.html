@@ -18,7 +18,8 @@
 				<li ng-repeat="movie in movies | filter: query | orderBy: order" class="thumbnail">
 					<a href="#/movies/{{movie.id}}" class="thumb"><img ng-src="{{movie.artwork}}" class="movie"></a>
 					<a href="#/movies/{{movie.id}}">{{movie.name}}</a>
-					<p>{{movie.description}}</p>
+					<p><b>Genres</b>: {{movie.genres}}</p>
+					<p><b>Artists</b>: {{movie.artist}}</p>
 				</li>
 			</ul>
 		</div>
