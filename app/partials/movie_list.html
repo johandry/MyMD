@@ -1,41 +1,45 @@
 <div class="container-fluid">
-	<div class="row-fluid">
-		<div class="col-md-12">
-			<ul class="breadcrumb">
-				<li>
-					<a href="#/">Home</a> <span class="divider"></span>
-				</li>
-				<li class="active">
-					Movies
-				</li>
-			</ul>
-			<!-- Sidebar -->
+  <div class="row-fluid">
+    <div class="col-md-12">
+      <ul class="breadcrumb">
+        <li>
+          <a href="#/">Home</a> <span class="divider"></span>
+        </li>
+        <li class="active">
+          Movies
+        </li>
+      </ul>
+      <!-- Sidebar -->
  
- 			Sort By: 
-			<select ng-model="order">
-				<option value="name">Title</option>
-				<option value="id">Newest</option>
-				<option value="-id">Oldest</option>
-			</select>
+      Sort By: 
+      <select ng-model="order">
+        <option value="name">Title</option>
+        <option value="id">Newest</option>
+        <option value="-id">Oldest</option>
+      </select>
+      Genres:
+      <select ng-model="genreQuery.genres">
+        <option value="">All Genres</option>
+        <option ng-repeat="genre in genres" value="{{genre.name}}">{{genre.name}}</option>
+      </select>
+      Artists:
+      <select ng-model="artistQuery.artist">
+        <option value="">All Artists</option>
+        <option ng-repeat="artist in artists" value="{{artist.name}}">{{artist.name}}</option>
+      </select>
 
-			<!-- Body -->
-			<div class="panel-group" id="panel-364365">
-				<div class="panel panel-default" ng-repeat="movie in movies | filter: query | orderBy: order">
-					<div class="panel-heading">
-						 <a class="panel-title" data-toggle="collapse" data-parent="#panel-364365" href="#panel-movie-{{movie.id}}">{{movie.name}}</a>
-					</div>
-					<div id="panel-movie-{{movie.id}}" class="panel-collapse collapse in">
-						<div class="panel-body">
-							<a href="#/movies/{{movie.id}}" class="thumb"><img ng-src="{{movie.artwork}}" class="movie"></a>
-							<p><b>Genres</b>: {{movie.genres}}</p>
-							<p><b>Artists</b>: {{movie.artist}}</p>
-						</div>
-					</div>
-				</div>
-			</div>
+      <!-- Body -->
+      <div class="movie">
+        <article ng-repeat="movie in movies | filter: query | filter: artistQuery | filter: genreQuery | orderBy: order" class="thumbnail">
+          <a href="#/movies/{{movie.id}}" class="thumb"><img ng-src="{{movie.artwork}}" class="movie"></a>
+          <h2>{{movie.name}}</h2>
+          <p><b>Genres</b>: {{movie.genres}}</p>
+          <p><b>Artists</b>: {{movie.artist}}</p>
+        </article>
+      </div>
 
-		</div>
-	</div>
+    </div>
+  </div>
 </div>
 
 

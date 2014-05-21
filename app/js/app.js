@@ -7,7 +7,8 @@ angular.module('myMoviesDashboardApp', [
   'myMoviesDashboardApp.filters',
   'myMoviesDashboardApp.services',
   'myMoviesDashboardApp.directives',
-  'myMoviesDashboardApp.controllers'
+  'myMoviesDashboardApp.controllers',
+  'ui.bootstrap'
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/movies', {templateUrl: 'partials/movie_list.html', controller: 'MovieListCtrl'});

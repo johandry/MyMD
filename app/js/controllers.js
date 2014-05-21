@@ -8,6 +8,14 @@ angular.module('myMoviesDashboardApp.controllers', [])
   		$scope.movies = data;
   	});
 
+    $http.get('movies/artists.json').success(function(data){
+      $scope.artists = data;
+    });
+
+    $http.get('movies/genres.json').success(function(data){
+      $scope.genres = data;
+    });
+
 	  $scope.order = 'id';
 
   }])

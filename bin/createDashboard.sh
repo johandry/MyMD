@@ -1,218 +1,90 @@
 #!/bin/bash
 
-# ============= Directories ============= 
-# Directory where iTunes store the movies
-SOURCE="/Volumes/Media Center/Shared iTunes/iTunes Media/Movies"
-# Directory of backups of the iTunes movies
-BKPSRC="/Volumes/Backup01/Shared iTunes/iTunes Media/Movies"
+help() {
+cat <<EOHELP
+${0##*/} is used to create the database in different formats for the My Movies Dashboard application
 
-# Directory to create the dashboard
-DSB_HOME="/Users/johandry/Sites/MyMD/app/movies"
-# Directory to create the dashboard in DropBox
-DSB_DRPB="/Users/johandry/Dropbox/Shared/Movies"
-# Directory to create the movies artwork
-DSB_ARTW="${DSB_HOME}/../img/artwork"
-# ========== End of Directories ==========
+The formats are: JSON, CSV, HTML and DB in SQLite. If ${0##*/} is executed without option by default will create all the formats
+To create a new format it have to be included in ${0##*/} and in the myMD_format.sh script. You can clone it from other myMD_format.sh script.
 
-# Download sublerCLI from:
-SUBLER="/usr/local/bin/subler"
-# Download mp4art from: http://mp4v2.googlecode.com/svn/doc/1.9.0/ToolGuide.html#TOC6
-mp4art="/usr/local/bin/mp4art"
-# Install ImageMagick with: brew install ImageMagick
-convert="/usr/local/bin/convert"
+Options:
+  --all:  Create all the formats
+  --json: Create the JSON format
+  --csv:  Create the CSV format
+  --html: Create the HTML format
+  --db:   Create the DB format for SQLite
 
-[[ ! -e ${SOURCE} ]] && err_msg="\n\tSource directory does not exists (${SOURCE})"
-[[ ! -e ${BKPSRC} ]] && err_msg="\n\tBackup directory does not exists (${BKPSRC})"
-[[ ! -e ${DSB_HOME} ]] && err_msg="\n\tDashboard Home directory does not exists (${DSB_HOME})"
-[[ ! -e ${DSB_DRPB} ]] && err_msg="\n\tDashboard Dropbox directory does not exists (${DSB_DRPB})"
-[[ -n ${err_msg} ]] && echo -e "ERROR: ${err_msg}" && exit 1
+Examples:
+  ${0##*/}              # Create all the formats
+  ${0##*/} --all        # Same as previous example
+  ${0##*/} --json       # Creates only the JSON file
+  ${0##*/} --json --db  # Creates the JSON file and the SQLite DB file
+EOHELP
+exit 0
+}
+[[ ${1} == "-h" ]] && help
 
-# Files to save the Movies Dashboard
-JSON_MOVIES="${DSB_HOME}/movies.json";
-CSV_MOVIES="${DSB_HOME}/movies.csv";
-HTML_MOVIES="${DSB_HOME}/index.html";
-DB_MOVIES="${DSB_HOME}/movies.db";
-
-headers () {
-  # JSON
-  echo "[" > "${JSON_MOVIES}"
-
-  # CSV
-  echo "Name,Filename,Artwork,HD,M4V,Backup,Artist,Main Genre,Genres,Release Date,Description,Rating,Studio,Director,Producers,Screenwriters,Media Kind,Path" > "${CSV_MOVIES}"
-
-  # HTML
-  cat << EOHTMLHEADER > "${HTML_MOVIES}"
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Movies Dashboard</title>
-    <!-- Description, Keywords and Author -->
-    <meta name="description" content="Movies Dashboard with information about all my movies from their metadata.">
-    <meta name="keywords" content="Movies, Metadata">
-    <meta name="author" content="Johandry Amador">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Fonts -->
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Inder' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
-    
-    <!-- Styles -->
-    <!-- Bootstrap CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font awesome CSS -->
-    <link href="css/font-awesome.min.css" rel="stylesheet"> 
-    <!-- Custom CSS -->
-    <link href="css/style.css" rel="stylesheet">
-    
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="img/favicon.ico">
-  </head>
-  <body>
-    <table>
-      <caption>Movies Dashboard</caption>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Artwork</th>
-          <th>Filename</th>
-          <th>HD</th>
-          <th>M4V</th>
-          <th>Backup</th>
-          <th>Artist</th>
-          <th>Main Genre</th>
-          <th>Genres</th>
-          <th>Release Date</th>
-          <th>Description</th>
-          <th>Rating</th>
-          <th>Studio</th>
-          <th>Director</th>
-          <th>Producers</th>
-          <th>Screenwriters</th>
-          <th>Media Kind</th>
-          <th>Path</th>
-        </tr>
-      </thead>
-      <tbody>
-EOHTMLHEADER
-
-  #SQLite
-  rm -f "${DB_MOVIES}"
-  cat << EOSQLHEADER | sqlite3 "${DB_MOVIES}"
-CREATE TABLE Movies (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  name                  TEXT   NOT NULL,
-  artwork               TEXT,
-  filename              TEXT   NOT NULL,
-  hd                    INTEGER,
-  format                INTEGER,
-  backup                INTEGER,
-  main_genre_id         INTEGER NOT NULL,
-  release_date          DATE,
-  description           TEXT,
-  rating_id             INTEGER NOT NULL,
-  media_kind_id         INTEGER NOT NULL,
-  path                  TEXT,
-
-  FOREIGN KEY (main_genre_id) REFERENCES Genres(id),
-  FOREIGN KEY (rating_id)     REFERENCES Ratings(id),
-  FOREIGN KEY (media_kind_id) REFERENCES MediaKinds(id)
-);
-
-CREATE TABLE Genres (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  name                  TEXT   NOT NULL
-);
-
-CREATE TABLE People (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  name                  TEXT   NOT NULL
-);
-
-CREATE TABLE Ratings (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  name                  TEXT   NOT NULL
-);
-
-CREATE TABLE Studios (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  name                  TEXT   NOT NULL
-);
-
-CREATE TABLE MediaKinds (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  name                  TEXT   NOT NULL
-);
-
-CREATE TABLE GenresMovies (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  genre_id              INTEGER   NOT NULL,
-  movie_id              INTEGER   NOT NULL,
-
-  FOREIGN KEY (genre_id)     REFERENCES Genres(id),
-  FOREIGN KEY (movie_id)     REFERENCES Movies(id)
-);
-
-CREATE TABLE StudiosMovies (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  studio_id             INTEGER   NOT NULL,
-  movie_id              INTEGER   NOT NULL,
-
-  FOREIGN KEY (studio_id)    REFERENCES Studios(id),
-  FOREIGN KEY (movie_id)     REFERENCES Movies(id)
-);
-
-CREATE TABLE PeopleMovies (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  person_id             INTEGER   NOT NULL,
-  movie_id              INTEGER   NOT NULL,
-  role_id               INTEGER   NOT NULL,
-
-  FOREIGN KEY (person_id)    REFERENCES People(id),
-  FOREIGN KEY (movie_id)     REFERENCES Movies(id),
-  FOREIGN KEY (role_id)      REFERENCES Roles(id)
-);
-
-CREATE TABLE Roles (
-  id    INTEGER PRIMARY KEY    AUTOINCREMENT,
-  name                  TEXT   NOT NULL
-);
-
-INSERT INTO Roles ( name ) VALUES ( "Actor" );
-INSERT INTO Roles ( name ) VALUES ( "Director" );
-INSERT INTO Roles ( name ) VALUES ( "Screenwriter" );
-INSERT INTO Roles ( name ) VALUES ( "Producer" );
-EOSQLHEADER
+error() {
+  echo -e "\033[1;91mERROR\033[0m:${1}" >&2
+  exit 1
 }
 
+# Read configuration variables from myMD.conf located at the same directory as this script
+[[ ! -e ${0%/*}/myMD.conf ]] && error "Configuration file not found at ${0%/*}/myMD.conf"
+source ${0%/*}/myMD.conf
+
+# Validate the variables from configuration file
+err_msg=''
+[[ ! -e ${SOURCE} ]]   && err_msg="${err_msg}\n  \033[1;91m"$'\302\267'"\033[0m Source directory does not exists (${SOURCE:-NULL})"
+[[ ! -e ${BKPSRC} ]]   && err_msg="${err_msg}\n  \033[1;91m"$'\302\267'"\033[0m Backup directory does not exists (${BKPSRC:-NULL})"
+[[ ! -e ${DSB_HOME} ]] && err_msg="${err_msg}\n  \033[1;91m"$'\302\267'"\033[0m Dashboard Home directory does not exists (${DSB_HOME:-NULL})"
+[[ ! -e ${DSB_DRPB} ]] && err_msg="${err_msg}\n  \033[1;91m"$'\302\267'"\033[0m Dashboard Dropbox directory does not exists (${DSB_DRPB:-NULL})"
+[[ ! -e ${SUBLER} ]]   && err_msg="${err_msg}\n  \033[1;91m"$'\302\267'"\033[0m Subler CLI is not installed (${SUBLER:-NULL})"
+[[ ! -e ${mp4art} ]]   && err_msg="${err_msg}\n  \033[1;91m"$'\302\267'"\033[0m Mp4art is not installed (${mp4art:-NULL})"
+[[ ! -e ${convert} ]]  && err_msg="${err_msg}\n  \033[1;91m"$'\302\267'"\033[0m ImageMagick is not installed (${convert:-NULL})"
+[[ -n ${err_msg} ]] && error ${err_msg}
+
+# Check parameters and set _FORMAT_ to 1 if that format is required
+# If no parameters or --all will create all the formats 
+if [[ $# -eq 0 ]] || [[ ${1} == "--all" ]]
+then 
+  _JSON_=1; 
+  _CSV_=1; 
+  _HTML_=1; 
+  _DB_=1;
+  shift;
+else
+  while [[ $# -gt 0 ]]
+  do
+    [[ ${1} == "--json" ]] && _JSON_=1
+    [[ ${1} == "--csv"  ]] && _CSV_=1
+    [[ ${1} == "--html" ]] && _HTML_=1
+    [[ ${1} == "--db"   ]] && _DB_=1
+    shift;
+  done
+fi
+
+# Check if the file for that format exists and load it
+[[ -e ${0%/*}/myMD_json.sh ]] && [[ ${_JSON_} -eq 1 ]] && JSON=1 && source ${0%/*}/myMD_json.sh
+[[ -e ${0%/*}/myMD_csv.sh  ]] && [[ ${_CSV_}  -eq 1 ]] && CSV=1  && source ${0%/*}/myMD_csv.sh
+[[ -e ${0%/*}/myMD_html.sh ]] && [[ ${_HTML_} -eq 1 ]] && HTML=1 && source ${0%/*}/myMD_html.sh
+[[ -e ${0%/*}/myMD_db.sh   ]] && [[ ${_DB_}   -eq 1 ]] && DB=1   && source ${0%/*}/myMD_db.sh
+
+
+# Headers for each format
+headers () {
+  [[ ${JSON} -eq 1 ]] && json.header
+  [[ ${CSV}  -eq 1 ]] && csv.header
+  [[ ${HTML} -eq 1 ]] && html.header
+  [[ ${DB}   -eq 1 ]] && db.header
+}
+
+# Footers for each format
 footers () {
-  # JSON
-  echo -e "  }\n]" >> "${JSON_MOVIES}"
-
-  # CSV
-
-  # HTML
-  cat << EOHTMLFOOTER >> "${HTML_MOVIES}"
-      </tbody>
-    </table>
-    <!-- Javascript files -->
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="js/bootstrap.min.js"></script>
-    <!-- Respond JS for IE8 -->
-    <script src="js/respond.min.js"></script>
-    <!-- HTML5 Support for IE -->
-    <script src="js/html5shiv.js"></script>
-    <!-- Custom JS -->
-    <script src="js/custom.js"></script>
-  </body>
-</html>
-EOHTMLFOOTER
-
-  # SQLite
+  [[ ${JSON} -eq 1 ]] && json.footer
+  [[ ${CSV}  -eq 1 ]] && csv.footer
+  [[ ${HTML} -eq 1 ]] && html.footer
+  [[ ${DB}   -eq 1 ]] && db.footer
 }
 
 entry () {
@@ -235,249 +107,40 @@ entry () {
   local path=$(echo "${17}" | tr '"' "'")
   local artworks=$(echo "${18}" | tr '"' "'")
 
+  artworks=$(echo ${artworks} | sed "s#${DSB_HOME}/\.\./##g" | sed 's/ /%20/g')
   local artwork=${artworks%%:*}
-  artwork=$(echo ${artworks} | sed "s#${DSB_HOME}/\.\./##" | sed 's/ /%20/g')
-
+  artworks=${artworks#*:}
+  
   local hd=0
   [[ ${filename} =~ .*HD\).* ]] && hd=1
 
-  
-  # JSON
-  [[ ${ID} -ne 1 ]] && echo "  }," >> "${JSON_MOVIES}"
-  cat << EOJSONENTRY >> "${JSON_MOVIES}"
-  {
-    "id": ${ID},
-    "name":"${name}",
-    "filename":"${filename}",
-    "artwork":"${artwork}",
-    "hd":${hd},
-    "m4v":${ok_format},
-    "backup":${ok_backup},
-    "artist":"${artist}",
-    "mainGenre":"${main_genre}",
-    "genres":"${genres}",
-    "releaseDate":"${release_date}",
-    "description":"${description}",
-    "rating":"${rating}",
-    "studio":"${studio}",
-    "director":"${director}",
-    "producers":"${producers}",
-    "screenwriters":"${screenwriters}",
-    "mediaKind":"${media_kind}",
-    "path":"${path}"
-EOJSONENTRY
+  local entries=(
+    ${ID}
+    "${name}"
+    "${filename}"
+    "${artwork}"
+    "${artworks}"
+    ${hd}
+    ${ok_format}
+    ${ok_backup}
+    "${artist}"
+    "${main_genre}"
+    "${genres}"
+    "${release_date}"
+    "${description}"
+    "${rating}"
+    "${studio}"
+    "${director}"
+    "${producers}"
+    "${screenwriters}"
+    "${media_kind}"
+    "${path}"
+  )
 
-  # CSV
-  echo "\"${name}\",\"${filename}\",\"${artwork}\",${hd},${ok_format},${ok_backup},\"${artist}\",\"${main_genre}\",\"${genres}\",\"${release_date}\",\"${description}\",\"${rating}\",\"${studio}\",\"${director}\",\"${producers}\",\"${screenwriters}\",\"${media_kind}\",\"${path}\"" >> "${CSV_MOVIES}"
-
-  # HTML
-  cat << EOHTMLENTRY >> "${HTML_MOVIES}"
-        <tr>
-          <th>${name}</th>
-          <th><img src="${artwork}" style="width:150px;"/></th>
-          <td>${hd}</td>
-          <td>${ok_format}</td>
-          <td>${ok_backup}</td>
-          <td>${filename}</td>
-          <td>${artist}</td>
-          <td>${main_genre}</td>
-          <td>${genres}</td>
-          <td>${release_date}</td>
-          <td>${description}</td>
-          <td>${rating}</td>
-          <td>${studio}</td>
-          <td>${director}</td>
-          <td>${producers}</td>
-          <td>${screenwriters}</td>
-          <td>${media_kind}</td>
-          <td>${path}</td>
-        </tr>
-EOHTMLENTRY
-  
-  # SQLite
-  genre_id=$(echo "SELECT id FROM Genres WHERE name=\"${main_genre}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-  if [[ -z ${genre_id} ]]
-    then
-    echo "INSERT INTO Genres ( name ) VALUES ( \"${main_genre}\" );" | sqlite3 "${DB_MOVIES}"
-    genre_id=$(echo "SELECT id FROM Genres WHERE name=\"${main_genre}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-  fi
-
-  rating_id=$(echo "SELECT id FROM Ratings WHERE name=\"${rating}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-  if [[ -z ${rating_id} ]]
-    then
-    echo "INSERT INTO Ratings ( name ) VALUES ( \"${rating}\" );" | sqlite3 "${DB_MOVIES}"
-    rating_id=$(echo "SELECT id FROM Ratings WHERE name=\"${rating}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-  fi
-
-  media_kind_id=$(echo "SELECT id FROM MediaKinds WHERE name=\"${media_kind}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-  if [[ -z ${media_kind_id} ]]
-    then
-    echo "INSERT INTO MediaKinds ( name ) VALUES ( \"${media_kind}\" );" | sqlite3 "${DB_MOVIES}"
-    media_kind_id=$(echo "SELECT id FROM MediaKinds WHERE name=\"${media_kind}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-  fi
-
-  cat << EOSQLENTRY | sqlite3 "${DB_MOVIES}"
-INSERT INTO Movies ( name, artwork, filename, hd, format, backup, main_genre_id, release_date, description, rating_id, media_kind_id, path )
-VALUES ( "${name}", "${artwork}", "${filename}", ${hd}, ${ok_format}, ${ok_backup}, ${genre_id}, "${release_date}", "${description}", ${rating_id}, ${media_kind_id}, "${path}" );
-EOSQLENTRY
-
-  movie_id=$(echo "SELECT id FROM Movies WHERE name=\"${name}\" AND filename=\"${filename}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-
-  IFS=,
-  # This will let us do this query:
-  # SELECT 
-  #   M.name AS "Movie",
-  #   G.name AS "Genre"
-  # FROM 
-  #   Movies AS M 
-  #   JOIN GenresMovies AS GM ON M.id = GM.movie_id 
-  #   JOIN Genres AS G ON G.id = GM.genre_id 
-  # WHERE G.name = "Science Fiction";
-  genres_list=( $genres )
-  for g in "${genres_list[@]}"
-  do
-    g=$(echo "${g}" | sed -e 's/^ *//' -e 's/ *$//')
-    g_id=$(echo "SELECT id FROM Genres WHERE name=\"${g}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    if [[ -z ${g_id} ]]
-      then
-      echo "INSERT INTO Genres ( name ) VALUES ( \"${g}\" );" | sqlite3 "${DB_MOVIES}"
-      g_id=$(echo "SELECT id FROM Genres WHERE name=\"${g}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    fi
-    echo "INSERT INTO GenresMovies ( genre_id, movie_id ) VALUES ( ${g_id}, ${movie_id} );" | sqlite3 "${DB_MOVIES}"
-  done
-
-  # This will let us do this query:
-  # SELECT 
-  #   M.name AS "Movie",
-  #   P.name AS "Actor",
-  #   R.name AS "Role"
-  # FROM 
-  #   Movies AS M 
-  #   JOIN PeopleMovies AS PM ON M.id = PM.movie_id 
-  #   JOIN People AS P ON P.id = PM.person_id 
-  #   JOIN Roles AS R ON R.id = PM.role_id 
-  # WHERE 
-  #   P.name = "Roger Moore"
-  #   AND R.name = "Actor";
-  artists_list=( $artist )
-  for p in "${artists_list[@]}"
-  do
-    p=$(echo "${p}" | sed -e 's/^ *//' -e 's/ *$//')
-    p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    if [[ -z ${p_id} ]]
-      then
-      echo "INSERT INTO People ( name ) VALUES ( \"${p}\" );" | sqlite3 "${DB_MOVIES}"
-      p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    fi
-    role_id=$(echo "SELECT id FROM Roles WHERE name=\"Actor\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    echo "INSERT INTO PeopleMovies ( person_id, movie_id, role_id ) VALUES ( ${p_id}, ${movie_id}, ${role_id} );" | sqlite3 "${DB_MOVIES}"
-  done
-
-  # This will let us do this query:
-  # SELECT 
-  #   M.name AS "Movie",
-  #   P.name AS "Director",
-  #   R.name AS "Role"
-  # FROM 
-  #   Movies AS M 
-  #   JOIN PeopleMovies AS PM ON M.id = PM.movie_id 
-  #   JOIN People AS P ON P.id = PM.person_id 
-  #   JOIN Roles AS R ON R.id = PM.role_id 
-  # WHERE 
-  #   P.name = "Roger Moore"
-  #   AND R.name = "Director";
-  director_list=( $director )
-  for p in "${director_list[@]}"
-  do
-    p=$(echo "${p}" | sed -e 's/^ *//' -e 's/ *$//')
-    p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    if [[ -z ${p_id} ]]
-      then
-      echo "INSERT INTO People ( name ) VALUES ( \"${p}\" );" | sqlite3 "${DB_MOVIES}"
-      p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    fi
-    role_id=$(echo "SELECT id FROM Roles WHERE name=\"Director\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    echo "INSERT INTO PeopleMovies ( person_id, movie_id, role_id ) VALUES ( ${p_id}, ${movie_id}, ${role_id} );" | sqlite3 "${DB_MOVIES}"
-  done  
-
-  # This will let us do this query:
-  # SELECT 
-  #   M.name AS "Movie",
-  #   P.name AS "Screenwriter",
-  #   R.name AS "Role"
-  # FROM 
-  #   Movies AS M 
-  #   JOIN PeopleMovies AS PM ON M.id = PM.movie_id 
-  #   JOIN People AS P ON P.id = PM.person_id 
-  #   JOIN Roles AS R ON R.id = PM.role_id 
-  # WHERE 
-  #   P.name = "Roger Moore"
-  #   AND R.name = "Screenwriter";
-  screenwriters_list=( $screenwriters )
-  for p in "${screenwriters_list[@]}"
-  do
-    p=$(echo "${p}" | sed -e 's/^ *//' -e 's/ *$//')
-    p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    if [[ -z ${p_id} ]]
-      then
-      echo "INSERT INTO People ( name ) VALUES ( \"${p}\" );" | sqlite3 "${DB_MOVIES}"
-      p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    fi
-    role_id=$(echo "SELECT id FROM Roles WHERE name=\"Screenwriter\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    echo "INSERT INTO PeopleMovies ( person_id, movie_id, role_id ) VALUES ( ${p_id}, ${movie_id}, ${role_id} );" | sqlite3 "${DB_MOVIES}"
-  done  
-
-  # This will let us do this query:
-  # SELECT 
-  #   M.name AS "Movie",
-  #   P.name AS "Producer",
-  #   R.name AS "Role"
-  # FROM 
-  #   Movies AS M 
-  #   JOIN PeopleMovies AS PM ON M.id = PM.movie_id 
-  #   JOIN People AS P ON P.id = PM.person_id 
-  #   JOIN Roles AS R ON R.id = PM.role_id 
-  # WHERE 
-  #   P.name = "Roger Moore"
-  #   AND R.name = "Producer";
-  producers_list=( $producers )
-  for p in "${producers_list[@]}"
-  do
-    p=$(echo "${p}" | sed -e 's/^ *//' -e 's/ *$//')
-    p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    if [[ -z ${p_id} ]]
-      then
-      echo "INSERT INTO People ( name ) VALUES ( \"${p}\" );" | sqlite3 "${DB_MOVIES}"
-      p_id=$(echo "SELECT id FROM People WHERE name=\"${p}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    fi
-    role_id=$(echo "SELECT id FROM Roles WHERE name=\"Producer\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    echo "INSERT INTO PeopleMovies ( person_id, movie_id, role_id ) VALUES ( ${p_id}, ${movie_id}, ${role_id} );" | sqlite3 "${DB_MOVIES}"
-  done  
-
-  # This will let us do this query:
-  # SELECT 
-  #   M.name AS "Movie",
-  #   S.name AS "Studio"
-  # FROM 
-  #   Movies AS M 
-  #   JOIN StudiosMovies AS SM ON M.id = SM.movie_id 
-  #   JOIN Studios AS S ON S.id = SM.studio_id 
-  # WHERE S.name = "MGM";
-  studio_list=( $studio )
-  for s in "${studio_list[@]}"
-  do
-    s=$(echo "${s}" | sed -e 's/^ *//' -e 's/ *$//')
-    s_id=$(echo "SELECT id FROM Studios WHERE name=\"${s}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    if [[ -z ${s_id} ]]
-      then
-      echo "INSERT INTO Studios ( name ) VALUES ( \"${s}\" );" | sqlite3 "${DB_MOVIES}"
-      s_id=$(echo "SELECT id FROM Studios WHERE name=\"${s}\";" | sqlite3 "${DB_MOVIES}" 2>/dev/null)
-    fi
-    echo "INSERT INTO StudiosMovies ( studio_id, movie_id ) VALUES ( ${s_id}, ${movie_id} );" | sqlite3 "${DB_MOVIES}"
-  done
-
-  unset IFS
-
+  [[ ${JSON} -eq 1 ]] && json.entry "${entries[@]}"
+  [[ ${CSV}  -eq 1 ]] && csv.entry  "${entries[@]}"
+  [[ ${HTML} -eq 1 ]] && html.entry "${entries[@]}"
+  [[ ${DB}   -eq 1 ]] && db.entry   "${entries[@]}"
 }
 
 headers
@@ -505,6 +168,7 @@ do
   producers=
   screenwriters=
   media_kind=
+
   while read data
   do
     [[ ${data} =~ "Name:" ]]             && name=$(echo ${data} | sed 's/Name: //')
@@ -536,7 +200,7 @@ do
     *)  media_kind="UNKNOWN (${media_kind})" ;;
   esac
 
-  # Get the movie artwork
+  # Get the movie artworks
   artworkDir=`printf "${DSB_ARTW}/%05d" $ID`
   
   mkdir -p "${artworkDir}"
