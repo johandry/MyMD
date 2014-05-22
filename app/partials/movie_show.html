@@ -1,2 +1,37 @@
-This is movie #{{movie.id}}
-Title: {{movie.name}}
+<img ng-src="{{movie.artwork}}" class="movie">
+
+<h1>{{movie.name}}</h1>
+
+<p>{{movie.description}}</p>
+
+<ul>
+  <li>
+    <dl>HD:</dl>
+    <dd>{{movie.hd | checkmark}}</dd>
+  </li>
+  <li>
+    <dl>Backup:</dl>
+    <dd>{{movie.backup | checkmark}}</dd>
+  </li>
+  <li>
+    <dl>Release Date:</dl>
+    <dd>{{movie.releaseDate}}</dd>
+  </li>
+  <li>
+    <dl>Artists:</dl>
+    <dd>{{movie.artists}}</dd>
+  </li> 
+  <li>
+    <dl>Genre:</dl>
+    <dd>{{movie.mainGenre}}</dd>
+  </li> 
+  <li>
+    <dl>Genres:</dl>
+    <dd>{{movie.genres}}</dd>
+  </li>
+
+  <li>
+    <dl>Director:</dl>
+    <dd>{{movie.director}}</dd>
+  </li>  
+</ul>

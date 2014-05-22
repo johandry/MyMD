@@ -1,29 +1,45 @@
 <div class="container-fluid">
-	<div class="row-fluid">
-		<div class="col-md-2">
-			<!-- Sidebar -->
-			Search: <input ng-model="query">
+  <div class="row-fluid">
+    <div class="col-md-12">
+      <ul class="breadcrumb">
+        <li>
+          <a href="#/">Home</a> <span class="divider"></span>
+        </li>
+        <li class="active">
+          Movies
+        </li>
+      </ul>
+      <!-- Sidebar -->
+ 
+      Sort By: 
+      <select ng-model="order">
+        <option value="name">Title</option>
+        <option value="id">Newest</option>
+        <option value="-id">Oldest</option>
+      </select>
+      Genres:
+      <select ng-model="genreQuery.genres">
+        <option value="">All Genres</option>
+        <option ng-repeat="genre in genres" value="{{genre.name}}">{{genre.name}}</option>
+      </select>
+      Artists:
+      <select ng-model="artistQuery.artist">
+        <option value="">All Artists</option>
+        <option ng-repeat="artist in artists" value="{{artist.name}}">{{artist.name}}</option>
+      </select>
 
-			Sort By: 
-			<select ng-model="order">
-				<option value="name">Title</option>
-				<option value="id">Newest</option>
-				<option value="-id">Oldest</option>
-			</select>
-		</div>
+      <!-- Body -->
+      <div class="movie">
+        <article ng-repeat="movie in movies | filter: query | filter: artistQuery | filter: genreQuery | orderBy: order" class="thumbnail">
+          <a href="#/movies/{{movie.id}}" class="thumb"><img ng-src="{{movie.artwork}}" class="movie"></a>
+          <h2>{{movie.name}}</h2>
+          <p><b>Genres</b>: {{movie.genres}}</p>
+          <p><b>Artists</b>: {{movie.artist}}</p>
+        </article>
+      </div>
 
-		<div class="col-md-10">
-			<!-- Body -->
-			<ul class="movies">
-				<li ng-repeat="movie in movies | filter: query | orderBy: order" class="thumbnail">
-					<a href="#/movies/{{movie.id}}" class="thumb"><img ng-src="{{movie.artwork}}" class="movie"></a>
-					<a href="#/movies/{{movie.id}}">{{movie.name}}</a>
-					<p><b>Genres</b>: {{movie.genres}}</p>
-					<p><b>Artists</b>: {{movie.artist}}</p>
-				</li>
-			</ul>
-		</div>
-	</div>
+    </div>
+  </div>
 </div>
 
 
