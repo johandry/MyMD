@@ -1,6 +1,6 @@
+
 logs/*
 !.gitkeep
-node_modules/
 tmp
 .DS_Store
 .idea*.gem
@@ -14,8 +14,12 @@ tmp
 /test/version_tmp/
 /tmp/
 
-# Vagrant stuff
+## Vagrant stuff
 /.vagrant
+
+## NodeJS files
+/src/node_modules/
+/src/bower_components
 
 ## Specific to RubyMotion:
 .dat*
