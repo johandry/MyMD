@@ -55,11 +55,16 @@ node default {
   }
   ->
   file_line { "update hostname in Gruntfile": 
-    line        => "        hostname: '0.0.0.0',", 
+    line        => '        hostname: \'0.0.0.0\',',
     path        => '/home/vagrant/workspace/src/Gruntfile.js', 
-    match       => "hostname: '.*',", 
+    match       => 'hostname: \'.*\',',
     ensure      => 'present',
     require     => File['/home/vagrant/workspace/src/Gruntfile.js'],
+  }
+
+  service { 'firewalld':
+    enable      => 'disabled',
+    ensure      => 'stopped',
   }
 
 }
