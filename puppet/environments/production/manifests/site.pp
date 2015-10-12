@@ -63,7 +63,6 @@ node default {
   }
 
   service { 'firewalld':
-    enable      => 'disabled',
     ensure      => 'stopped',
   }
 
