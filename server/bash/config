@@ -1,0 +1,29 @@
+# ============= Directories ============= 
+
+# Directory where iTunes store the movies
+SOURCE="/Volumes/Media Center/Shared iTunes/iTunes Media/Movies"
+
+# Directory of backups of the iTunes movies
+BKPSRC="/Volumes/Backup01/Shared iTunes/iTunes Media/Movies"
+
+# Directory to create the dashboard
+DSB_HOME="${SCRIPT_DIR}/../../db"
+
+# Directory to create the dashboard in DropBox
+DSB_DRPB="${HOME}/Dropbox/Shared/Movies"
+
+# Directory to create the movies artwork
+DSB_ARTW="${DSB_HOME}/artwork"
+
+# ========== End of Directories ==========
+
+# Dependencies
+
+# Download sublerCLI from:
+SUBLER="/usr/local/bin/SublerCLI"
+
+# Download mp4art from: http://mp4v2.googlecode.com/svn/doc/1.9.0/ToolGuide.html#TOC6
+mp4art="/usr/local/bin/mp4art"
+
+# Install ImageMagick with: brew install ImageMagick
+convert="/usr/local/bin/convert"
