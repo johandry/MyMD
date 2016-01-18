@@ -1,4 +1,4 @@
-# ============= Directories ============= 
+# ============= Directories =============
 
 # Directory where iTunes store the movies
 SOURCE="/Volumes/Media Center/Shared iTunes/iTunes Media/Movies"
@@ -16,6 +16,8 @@ DSB_DRPB="${HOME}/Dropbox/Shared/Movies"
 DSB_ARTW="${DSB_HOME}/artwork"
 
 # ========== End of Directories ==========
+
+FIREBASE_URL='https://mymoviesdb.firebaseio.com'
 
 # Dependencies
 

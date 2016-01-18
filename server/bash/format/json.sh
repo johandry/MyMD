@@ -1,17 +1,53 @@
 JSON_MOVIES="${DSB_HOME}/movies.json";
 JSON_GENRES="${DSB_HOME}/genres.json";
 JSON_ARTISTS="${DSB_HOME}/artists.json";
+JSON_DB="${DSB_HOME}/mymd.json";
 
 json.header() {
-	echo "[" > "${JSON_MOVIES}"
-	echo "[" > "${JSON_GENRES}"
-	echo "[" > "${JSON_ARTISTS}"
+	echo "  {" > "${JSON_MOVIES}"
+	echo "  {" > "${JSON_GENRES}"
+	echo "  {" > "${JSON_ARTISTS}"
 }
 
 json.footer() {
-	echo -e "  }\n]" >> "${JSON_MOVIES}"
-	echo -e "  { \"name\": \"\" }\n]" >> "${JSON_GENRES}"
-	echo -e "  { \"name\": \"\" }\n]" >> "${JSON_ARTISTS}"
+	echo -e "    }\n  }" >> "${JSON_MOVIES}"
+	echo -e "    }\n  }" >> "${JSON_GENRES}"
+	echo -e "    }\n  }" >> "${JSON_ARTISTS}"
+
+  # Create a JSON file with the 3 JSON files
+  echo -e "{\n  \"movies\": {" > "${JSON_DB}"
+  tail -n +2 "${JSON_MOVIES}" | sed '$d' >> "${JSON_DB}"
+  echo -e "  },\n  \"artists\": {" >> "${JSON_DB}"
+  tail -n +2 "${JSON_ARTISTS}" | sed '$d' >> "${JSON_DB}"
+  echo -e "  },\n  \"genres\": {" >> "${JSON_DB}"
+  tail -n +2 "${JSON_GENRES}" | sed '$d' >> "${JSON_DB}"
+  echo -e "  }\n}\n" >> "${JSON_DB}"
+}
+
+artist.entry() {
+  local name=${1}
+  # id=$(echo $name | tr '.$#[]/' '_')
+	id=$(grep '"name"' "${JSON_ARTISTS}" | wc -l | sed 's/ //g')
+	(( id++ ))
+  [[ $(tail -n -1 "${JSON_ARTISTS}" | head -1 | sed 's/ //g') != "{" ]] && echo "    }," >> "${JSON_ARTISTS}"
+  cat << EOAENTRY >> "${JSON_ARTISTS}"
+    "${id}": {
+			"id": ${id},
+      "name": "${name}"
+EOAENTRY
+}
+
+genre.entry() {
+  local name=${1}
+  # id=$(echo $name | tr '.$#[]/' '_')
+	id=$(grep '"name"' "${JSON_GENRES}" | wc -l | sed 's/ //g')
+	(( id++ ))
+  [[ $(tail -n -2 "${JSON_GENRES}" | head -1 | sed 's/ //g') != "{" ]] && echo "    }," >> "${JSON_GENRES}"
+  cat << EOAENTRY >> "${JSON_GENRES}"
+    "${id}": {
+			"id": ${id},
+      "name": "${name}"
+EOAENTRY
 }
 
 json.entry() {
@@ -37,56 +73,63 @@ json.entry() {
   local media_kind=${19}
   local path=${20}
 
-  [[ ${ID} -ne 1 ]] && echo "  }," >> "${JSON_MOVIES}"
-  cat << EOJSONENTRY >> "${JSON_MOVIES}"
-  {
-    "id": ${ID},
-    "name":"${name}",
-    "filename":"${filename}",
-    "artwork":"${artwork}",
-    "artworks":"${artworks}",
-    "hd":${hd},
-    "m4v":${ok_format},
-    "backup":${ok_backup},
-    "artist":"${artist}",
-    "mainGenre":"${main_genre}",
-    "genres":"${genres}",
-    "releaseDate":"${release_date}",
-    "description":"${description}",
-    "rating":"${rating}",
-    "studio":"${studio}",
-    "director":"${director}",
-    "producers":"${producers}",
-    "screenwriters":"${screenwriters}",
-    "mediaKind":"${media_kind}",
-    "path":"${path}"
-EOJSONENTRY
-
 	g=$(echo "${main_genre}" | sed -e 's/^ *//' -e 's/ *$//')
-  if ! grep -q "\"${g}\"" "${JSON_GENRES}"
+  if ! grep -q "\"${g}\":" "${JSON_GENRES}"
   	then
-  	echo "  { \"name\": \"${g}\" }," >> "${JSON_GENRES}"
+    genre.entry "${g}"
   fi
+  # movie_genres_list="\"${g}\""
 
 	IFS=,
+	movie_genres_list=''
   genres_list=( $genres )
   for g in "${genres_list[@]}"
   do
     g=$(echo "${g}" | sed -e 's/^ *//' -e 's/ *$//')
-    if ! grep -q "\"${g}\"" "${JSON_GENRES}"
+    movie_genres_list="${movie_genres_list}, \"${g}\""
+    if ! grep -q "\"${g}\":" "${JSON_GENRES}"
     	then
-    	echo "  { \"name\": \"${g}\" }," >> "${JSON_GENRES}"
+    	genre.entry "${g}"
     fi
   done
+  movie_genres_list="[ ${movie_genres_list#, } ]"
 
+  movie_artist_list=''
   artists_list=( $artist )
   for p in "${artists_list[@]}"
   do
     p=$(echo "${p}" | sed -e 's/^ *//' -e 's/ *$//')
-    if ! grep -q "\"${p}\"" "${JSON_ARTISTS}"
+    movie_artist_list="${movie_artist_list}, \"${p}\""
+    if ! grep -q "\"${p}\":" "${JSON_ARTISTS}"
     	then
-    	echo "  { \"name\": \"${p}\" }," >> "${JSON_ARTISTS}"
+    	artist.entry "${p}"
     fi
   done
   unset IFS
+  movie_artist_list="[ ${movie_artist_list#, } ]"
+
+  [[ ${ID} -ne 1 ]] && echo "    }," >> "${JSON_MOVIES}"
+  cat << EOJSONENTRY >> "${JSON_MOVIES}"
+    "${ID}": {
+      "id": ${ID},
+      "name":"${name}",
+      "filename":"${filename}",
+      "artwork":"${artwork}",
+      "artworks":"${artworks}",
+      "hd":${hd},
+      "m4v":${ok_format},
+      "backup":${ok_backup},
+      "artist":${movie_artist_list},
+      "mainGenre":"${main_genre}",
+      "genres":${movie_genres_list},
+      "releaseDate":"${release_date}",
+      "description":"${description}",
+      "rating":"${rating}",
+      "studio":"${studio}",
+      "director":"${director}",
+      "producers":"${producers}",
+      "screenwriters":"${screenwriters}",
+      "mediaKind":"${media_kind}",
+      "path":"${path}"
+EOJSONENTRY
 }
