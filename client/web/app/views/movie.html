@@ -1,0 +1,30 @@
+<img ng-src="images/{{movie.artwork}}" class="movie">
+
+<h1>{{movie.name}}</h1>
+
+<p>{{movie.description}}</p>
+
+<ul>
+  <li>
+    <b>HD:</b> {{movie.hd | checkmark}}
+  </li>
+  <li>
+    <b>Backup:</b> {{movie.backup | checkmark}}
+  </li>
+  <li>
+    <b>Release Date:</b> {{movie.releaseDate}}
+  </li>
+  <li>
+    <b>Artists:</b> <span ng-repeat="artist in movie.artist"><a href="#/artists/{{movie.artistID[ $index ]}}">{{artist}}</a><span ng-show=" ! $last ">, </span></span>
+  </li>
+  <li>
+    <b>Genre:</b> <a href="#/genres/{{movie.mainGenreID}}">{{movie.mainGenre}}</a>
+  </li>
+  <li>
+    <b>Genres:</b> <span ng-repeat="genre in movie.genres"><a href="#/genres/{{movie.genresID[ $index ]}}">{{genre}}</a><span ng-show=" ! $last ">, </span></span>
+  </li>
+
+  <li>
+    <b>Director:</b> {{movie.director}}
+  </li>
+</ul>

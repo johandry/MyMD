@@ -167,12 +167,12 @@ create () {
 
   # If you are in development mode, do not take all the movies.
   # Uncomment the 3 above lines to test with the movies from DEV_INIT_MOVIE to (DEV_INIT_MOVIE + DEV_TOTAL):
-  DEV_INIT_MOVIE=500
-  DEV_TOTAL=10
-  ls "${SOURCE}"/*/* | tail -${DEV_INIT_MOVIE}| head -${DEV_TOTAL} > ${TMP_MOVIES_LIST_FILE}
+  # DEV_INIT_MOVIE=500
+  # DEV_TOTAL=10
+  # ls "${SOURCE}"/*/* | tail -${DEV_INIT_MOVIE}| head -${DEV_TOTAL} > ${TMP_MOVIES_LIST_FILE}
 
   # Uncomment the above line for production
-  # ls "${SOURCE}"/*/* > ${TMP_MOVIES_LIST_FILE}
+  ls "${SOURCE}"/*/* > ${TMP_MOVIES_LIST_FILE}
 
   TOTAL_MOVIES=$(cat ${TMP_MOVIES_LIST_FILE} | wc -l | tr -d ' ')
   ID=1
@@ -304,7 +304,7 @@ publish () {
   [[ ! -e ${JSON_DB} ]] && error "JSON Database not found" -ec 1
 
   debug "Publishing database to Firebase (${FIREBASE_URL})"
-  curl -X PUT -d "$(cat ${JSON_DB})" "${FIREBASE_URL}/.json?print=silent"
+  cat "${JSON_DB}" | curl -X PUT -d @- "${FIREBASE_URL}/.json?print=silent"
 }
 
 validate

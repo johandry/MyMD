@@ -35,6 +35,7 @@ artist.entry() {
 			"id": ${id},
       "name": "${name}"
 EOAENTRY
+	return ${id}
 }
 
 genre.entry() {
@@ -48,6 +49,7 @@ genre.entry() {
 			"id": ${id},
       "name": "${name}"
 EOAENTRY
+	return ${id}
 }
 
 json.entry() {
@@ -74,39 +76,56 @@ json.entry() {
   local path=${20}
 
 	g=$(echo "${main_genre}" | sed -e 's/^ *//' -e 's/ *$//')
-  if ! grep -q "\"${g}\":" "${JSON_GENRES}"
+  if ! grep -q "\"name\": \"${g}\"" "${JSON_GENRES}"
   	then
     genre.entry "${g}"
+		genre_id=$?
+	else
+		genre_id=$(cat "${JSON_GENRES}" | tr -d '\n' | sed "s/.*\"id\": \(.*\),.*\"name\": \"${g}\".*/\1/")
   fi
+	main_genre_id="${genre_id}"
   # movie_genres_list="\"${g}\""
+	# movie_genres_list_id="${genre_id}"
 
 	IFS=,
 	movie_genres_list=''
+	movie_genres_list_id=''
   genres_list=( $genres )
   for g in "${genres_list[@]}"
   do
     g=$(echo "${g}" | sed -e 's/^ *//' -e 's/ *$//')
     movie_genres_list="${movie_genres_list}, \"${g}\""
-    if ! grep -q "\"${g}\":" "${JSON_GENRES}"
+    if ! grep -q "\"name\": \"${g}\"" "${JSON_GENRES}"
     	then
     	genre.entry "${g}"
-    fi
+			genre_id=$?
+		else
+			genre_id=$(cat "${JSON_GENRES}" | tr -d '\n' | sed "s/.*\"id\": \(.*\),.*\"name\": \"${g}\".*/\1/")
+	  fi
+		movie_genres_list_id="${movie_genres_list_id}, ${genre_id}"
   done
   movie_genres_list="[ ${movie_genres_list#, } ]"
+	movie_genres_list_id="[ ${movie_genres_list_id#, } ]"
 
   movie_artist_list=''
+	movie_artist_list_id=''
   artists_list=( $artist )
   for p in "${artists_list[@]}"
   do
     p=$(echo "${p}" | sed -e 's/^ *//' -e 's/ *$//')
     movie_artist_list="${movie_artist_list}, \"${p}\""
-    if ! grep -q "\"${p}\":" "${JSON_ARTISTS}"
+    if ! grep -q "\"name\": \"${p}\"" "${JSON_ARTISTS}"
     	then
     	artist.entry "${p}"
-    fi
+			artist_id=$?
+		else
+			artist_id=$(cat "${JSON_ARTISTS}" | tr -d '\n' | sed "s/.*\"id\": \(.*\),.*\"name\": \"${p}\".*/\1/")
+	  fi
+		movie_artist_list_id="${movie_artist_list_id}, ${artist_id}"
   done
   unset IFS
   movie_artist_list="[ ${movie_artist_list#, } ]"
+	movie_artist_list_id="[ ${movie_artist_list_id#, } ]"
 
   [[ ${ID} -ne 1 ]] && echo "    }," >> "${JSON_MOVIES}"
   cat << EOJSONENTRY >> "${JSON_MOVIES}"
@@ -120,8 +139,11 @@ json.entry() {
       "m4v":${ok_format},
       "backup":${ok_backup},
       "artist":${movie_artist_list},
+			"artistID":${movie_artist_list_id},
       "mainGenre":"${main_genre}",
+			"mainGenreID":"${main_genre_id}",
       "genres":${movie_genres_list},
+			"genresID":${movie_genres_list_id},
       "releaseDate":"${release_date}",
       "description":"${description}",
       "rating":"${rating}",

@@ -79,4 +79,3 @@ rm -rf src/bower_components
 rm -rf src/dist
 rm -rf src/node_modules
 ```
-

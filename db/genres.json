@@ -1,45 +1,170 @@
-[
-  { "name": "Documentary" },
-  { "name": "Action & Adventure" },
-  { "name": "Adventure" },
-  { "name": "Action" },
-  { "name": "Thriller" },
-  { "name": "Foreign" },
-  { "name": "Science Fiction" },
-  { "name": "Crime" },
-  { "name": "Comedy" },
-  { "name": "Drama" },
-  { "name": "History" },
-  { "name": "Suspense" },
-  { "name": "Horror" },
-  { "name": "Disaster" },
-  { "name": "Family" },
-  { "name": "Comedy & Romance" },
-  { "name": "Romance" },
-  { "name": "Fantasy" },
-  { "name": "War" },
-  { "name": "Sports" },
-  { "name": "Mystery" },
-  { "name": "Kids & Family" },
-  { "name": "Animation" },
-  { "name": "Western" },
-  { "name": "Music" },
-  { "name": "Sci-Fi & Fantasy" },
-  { "name": "Comedia" },
-  { "name": "Indie" },
-  { "name": "Science Fiction, Action, Adventure" },
-  { "name": "Holiday" },
-  { "name": "Eastern" },
-  { "name": "Short" },
-  { "name": "Kids" },
-  { "name": "Musical" },
-  { "name": "Neo-noir" },
-  { "name": "Sports Film" },
-  { "name": "Sport" },
-  { "name": "Animación" },
-  { "name": "Familia" },
-  { "name": "Adventure & Action" },
-  { "name": "Feature Length Commentary" },
-  { "name": "Romance, Comedy" },
-  { "name": "" }
-]
+  {
+    "1": {
+			"id": 1,
+      "name": "Documentary"
+    },
+    "2": {
+			"id": 2,
+      "name": "Action & Adventure"
+    },
+    "3": {
+			"id": 3,
+      "name": "Adventure"
+    },
+    "4": {
+			"id": 4,
+      "name": "Action"
+    },
+    "5": {
+			"id": 5,
+      "name": "Thriller"
+    },
+    "6": {
+			"id": 6,
+      "name": "Foreign"
+    },
+    "7": {
+			"id": 7,
+      "name": "Science Fiction"
+    },
+    "8": {
+			"id": 8,
+      "name": "Crime"
+    },
+    "9": {
+			"id": 9,
+      "name": "Comedy"
+    },
+    "10": {
+			"id": 10,
+      "name": "Drama"
+    },
+    "11": {
+			"id": 11,
+      "name": "History"
+    },
+    "12": {
+			"id": 12,
+      "name": "Suspense"
+    },
+    "13": {
+			"id": 13,
+      "name": "Horror"
+    },
+    "14": {
+			"id": 14,
+      "name": "Disaster"
+    },
+    "15": {
+			"id": 15,
+      "name": "Family"
+    },
+    "16": {
+			"id": 16,
+      "name": "Comedy & Romance"
+    },
+    "17": {
+			"id": 17,
+      "name": "Romance"
+    },
+    "18": {
+			"id": 18,
+      "name": "Fantasy"
+    },
+    "19": {
+			"id": 19,
+      "name": "War"
+    },
+    "20": {
+			"id": 20,
+      "name": "Sports"
+    },
+    "21": {
+			"id": 21,
+      "name": "Mystery"
+    },
+    "22": {
+			"id": 22,
+      "name": "Kids & Family"
+    },
+    "23": {
+			"id": 23,
+      "name": "Animation"
+    },
+    "24": {
+			"id": 24,
+      "name": "Western"
+    },
+    "25": {
+			"id": 25,
+      "name": "Music"
+    },
+    "26": {
+			"id": 26,
+      "name": "Sci-Fi & Fantasy"
+    },
+    "27": {
+			"id": 27,
+      "name": "Comedia"
+    },
+    "28": {
+			"id": 28,
+      "name": "Indie"
+    },
+    "29": {
+			"id": 29,
+      "name": "Science Fiction, Action, Adventure"
+    },
+    "30": {
+			"id": 30,
+      "name": "Holiday"
+    },
+    "31": {
+			"id": 31,
+      "name": "Eastern"
+    },
+    "32": {
+			"id": 32,
+      "name": "Short"
+    },
+    "33": {
+			"id": 33,
+      "name": "Kids"
+    },
+    "34": {
+			"id": 34,
+      "name": "Musical"
+    },
+    "35": {
+			"id": 35,
+      "name": "Neo-noir"
+    },
+    "36": {
+			"id": 36,
+      "name": "Sports Film"
+    },
+    "37": {
+			"id": 37,
+      "name": "Sport"
+    },
+    "38": {
+			"id": 38,
+      "name": "Animación"
+    },
+    "39": {
+			"id": 39,
+      "name": "Familia"
+    },
+    "40": {
+			"id": 40,
+      "name": "Adventure & Action"
+    },
+    "41": {
+			"id": 41,
+      "name": "Feature Length Commentary"
+    },
+    "42": {
+			"id": 42,
+      "name": "Romance, Comedy"
+    }
+  }
