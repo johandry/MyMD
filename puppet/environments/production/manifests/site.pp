@@ -63,7 +63,10 @@ node default {
   }
 
   service { 'firewalld':
+<<<<<<< HEAD
     enable      => false,
+=======
+>>>>>>> 7f437e9a3eb74e2f3fb64d60741ddcd04cf939c1
     ensure      => 'stopped',
   }
 
