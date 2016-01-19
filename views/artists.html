@@ -1,1 +1,0 @@
-<h2>Artists</h2> <ul id="artists" ng-show="artists.length"> <li ng-repeat="artist in artists | orderBy: 'name' | filter: query"><a href="#/artists/{{artist.id}}">{{artist.name}}</a></li> </ul> <p class="alert alert-danger" ng-show="err">{{err}}</p>

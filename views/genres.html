@@ -1,1 +1,0 @@
-<h2>Genres</h2> <ul id="artists" ng-show="genres.length"> <li ng-repeat="genre in genres | orderBy: 'name' | filter: query"><a href="#/genres/{{genre.id}}">{{genre.name}}</a></li> </ul> <p class="alert alert-danger" ng-show="err">{{err}}</p>
