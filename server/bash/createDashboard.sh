@@ -124,7 +124,7 @@ entry () {
   local path=$(echo "${17}" | tr '"' "'")
   local artworks=$(echo "${18}" | tr '"' "'")
 
-  artworks=$(echo ${artworks} | sed "s#${DSB_HOME}/##g" | sed 's/ /%20/g' | sed 's/#/%23/g')
+  artworks=$(echo ${artworks} | sed "s#${DSB_HOME}/##g") # | sed 's/ /%20/g' | sed 's/#/%23/g')
   local artwork=${artworks%%:*}
   artworks=${artworks#*:}
 

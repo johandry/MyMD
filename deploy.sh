@@ -16,7 +16,6 @@ SOURCE_DIR=""
 # Options:
 #     -h, --help     Display this help message. bash {script_name} -h
 #     -m             Description of the Change
-#     -c, --client   Client name to deploy
 #
 # Description: {title} is a script to deploy MyMD to GitHub and make it a Web Application
 #              in http://www.johandry.com/MyMD
@@ -33,7 +32,6 @@ SOURCE_DIR=""
 source ~/bin/common.sh
 
 desc=
-client=
 
 while (( $# ))
 do
@@ -47,39 +45,42 @@ do
       shift
     ;;
 
-    --client|-c)
-      [[ -z $2 ]] && error "Need a client name to deploy" && \
-        usage && exit 1
+    --debug)
+    ;;
 
-      client=$2
-      shift
+    *)
+      warn "What is this: ($1)?"
     ;;
   esac
   shift
 done
 
-[[ -z ${desc} ]] && error "Need a description for the change" && \
-  usage && exit 1
-[[ -z ${client} || ! -d "${SCRIPT_DIR}/client/${client}" ]] && error "Need an existing client name to deploy" && \
-  usage && exit 1
+[[ -z ${desc} ]] && error "Need a description for the change" -ec 1
 
 [[ ! -d "${SCRIPT_DIR}/db/artwork" ]] && error "Artwork does not exists, was the DB created?" -ec 1
 
 if [[ ! -d "${SCRIPT_DIR}/../MyMD_gh-pages" ]]
 then
   cd "${SCRIPT_DIR}/.."
+  info "Clonning the brach gh-pages"
   git clone -b gh-pages https://github.com/johandry/MyMD.git MyMD_gh-pages
+  (( $? )) && error "Error cloning the brach gh-pages" -ec 1
   cd -
 fi
 
-cd "${SCRIPT_DIR}/client/${client}"
-grunt dist
+cd "${SCRIPT_DIR}/client/web"
+info "Building the production Web Application"
+grunt --force
+(( $? )) && error "Error building the Web Application"
+
+info "Do you want to continue? (Ctrl+C if not)"
+read
 
 cd "${SCRIPT_DIR}/../MyMD_gh-pages"
 rm -rf *
 
-cp "${SCRIPT_DIR}/client/${client}/dist/." .
-cp -R "${SCRIPT_DIR}/db/artwork" "${SCRIPT_DIR}/../MyMD_gh-pages/images"
+cp -r "${SCRIPT_DIR}/client/web/dist/." .
+cp -r "${SCRIPT_DIR}/db/artwork" "${SCRIPT_DIR}/../MyMD_gh-pages/images"
 
 git add . && \
 git commit -m "${desc}" && \
