@@ -21,7 +21,7 @@ angular.module('myMDApp')
             var genresMovies = [];
 
             for (var i = 0; i < movies.length; i++) {
-              if (movies[i].genres.indexOf($scope.genre.name) > -1 || movies[i].mainGenre === $scope.genre.name) {
+              if ( (movies[i].genres && movies[i].genres.indexOf($scope.genre.name) > -1) || movies[i].mainGenre === $scope.genre.name) {
                 genresMovies.push( movies[i] );
               }
             }

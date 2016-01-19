@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #set -x
 
-VERSION='1.1.0'
+VERSION='2.0.0'
 TITLE='My Movies Dashboard'
-PROJECT="CS"
-SOURCE_DIR="templates"
+PROJECT="MyMD"
+SOURCE_DIR="server/bash"
 # SOURCE=
 
 #=======================================================================================================
@@ -124,7 +124,7 @@ entry () {
   local path=$(echo "${17}" | tr '"' "'")
   local artworks=$(echo "${18}" | tr '"' "'")
 
-  artworks=$(echo ${artworks} | sed "s#${DSB_HOME}/##g" | sed 's/ /%20/g')
+  artworks=$(echo ${artworks} | sed "s#${DSB_HOME}/##g" | sed 's/ /%20/g' | sed 's/#/%23/g')
   local artwork=${artworks%%:*}
   artworks=${artworks#*:}
 
@@ -164,6 +164,9 @@ entry () {
 
 create () {
   headers
+
+  # Delete all the Artworks created before.
+  [[ -d ${DSB_ARTW} ]] && rm -rf "${DSB_ARTW}/*"
 
   # If you are in development mode, do not take all the movies.
   # Uncomment the 3 above lines to test with the movies from DEV_INIT_MOVIE to (DEV_INIT_MOVIE + DEV_TOTAL):
@@ -240,8 +243,12 @@ create () {
 
     # Artist my be repeated as they are taken from Artist and Cast.
     # Remove the repeated artists
-    tmp_artist=$(echo "${artist}, ${cast}" | sed 's/, /,/g' | tr ',' '\n' | sort | uniq | tr '\n' ',' | sed 's/,/, /g')
+    tmp_artist=$(echo "${artist}, ${cast}" | tr ',' '\n' | sed 's/^ *//' | sed 's/ *$//' | sort | uniq | tr '\n' ',' | sed 's/,/, /g')
     artist=${tmp_artist%, }
+
+    # Remove repeated genres, just in case
+    tmp_genres=$(echo "${genres}" | tr ',' '\n' | sed 's/^ *//' | sed 's/ *$//' | sort | uniq | tr '\n' ',' | sed 's/,/, /g')
+    genres=${tmp_genres%, }
 
     # Get the movie artworks
     artworkDir=`printf "${DSB_ARTW}/%05d" $ID`

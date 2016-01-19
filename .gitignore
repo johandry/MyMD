@@ -8,6 +8,9 @@
 # For built boxes
 **/*.box
 
+## Database
+db/
+
 ## NodeJS gitignore
 # NodeJS, Bower and Yeoman dependencies
 **/node_modules/

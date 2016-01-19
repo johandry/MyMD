@@ -21,7 +21,7 @@ angular.module('myMDApp')
             var artistsMovies = [];
 
             for (var i = 0; i < movies.length; i++) {
-              if (movies[i].artist.indexOf($scope.artist.name) > -1) {
+              if (movies[i].artist && movies[i].artist.indexOf($scope.artist.name) > -1) {
                 artistsMovies.push( movies[i] );
               }
             }
