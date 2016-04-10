@@ -9,19 +9,19 @@
     },
     "3": {
 			"id": 3,
-      "name": "Adventure"
+      "name": "Action"
     },
     "4": {
 			"id": 4,
-      "name": "Action"
+      "name": "Adventure"
     },
     "5": {
 			"id": 5,
-      "name": "Thriller"
+      "name": "Foreign"
     },
     "6": {
 			"id": 6,
-      "name": "Foreign"
+      "name": "Thriller"
     },
     "7": {
 			"id": 7,
@@ -105,66 +105,38 @@
     },
     "27": {
 			"id": 27,
-      "name": "Comedia"
+      "name": "Indie"
     },
     "28": {
 			"id": 28,
-      "name": "Indie"
+      "name": "Holiday"
     },
     "29": {
 			"id": 29,
-      "name": "Science Fiction, Action, Adventure"
+      "name": "Eastern"
     },
     "30": {
 			"id": 30,
-      "name": "Holiday"
+      "name": "Kids"
     },
     "31": {
 			"id": 31,
-      "name": "Eastern"
+      "name": "Short"
     },
     "32": {
 			"id": 32,
-      "name": "Short"
+      "name": "Musical"
     },
     "33": {
 			"id": 33,
-      "name": "Kids"
+      "name": "Neo-noir"
     },
     "34": {
 			"id": 34,
-      "name": "Musical"
+      "name": "Adventure & Action"
     },
     "35": {
 			"id": 35,
-      "name": "Neo-noir"
-    },
-    "36": {
-			"id": 36,
-      "name": "Sports Film"
-    },
-    "37": {
-			"id": 37,
-      "name": "Sport"
-    },
-    "38": {
-			"id": 38,
-      "name": "Animación"
-    },
-    "39": {
-			"id": 39,
-      "name": "Familia"
-    },
-    "40": {
-			"id": 40,
-      "name": "Adventure & Action"
-    },
-    "41": {
-			"id": 41,
-      "name": "Feature Length Commentary"
-    },
-    "42": {
-			"id": 42,
-      "name": "Romance, Comedy"
+      "name": "Thrillyer"
     }
   }

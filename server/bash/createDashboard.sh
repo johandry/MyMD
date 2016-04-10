@@ -243,11 +243,11 @@ create () {
 
     # Artist my be repeated as they are taken from Artist and Cast.
     # Remove the repeated artists
-    tmp_artist=$(echo "${artist}, ${cast}" | tr ',' '\n' | sed 's/^ *//' | sed 's/ *$//' | sort | uniq | tr '\n' ',' | sed 's/,/, /g')
+    tmp_artist=$(echo "${artist}, ${cast}" | tr ',' '\n' | sed 's/^ *//' | sed 's/ *$//' | sed '/^\s*$/d' | sort | uniq | tr '\n' ',' | sed 's/,/, /g')
     artist=${tmp_artist%, }
 
     # Remove repeated genres, just in case
-    tmp_genres=$(echo "${genres}" | tr ',' '\n' | sed 's/^ *//' | sed 's/ *$//' | sort | uniq | tr '\n' ',' | sed 's/,/, /g')
+    tmp_genres=$(echo "${genres}" | tr ',' '\n' | sed 's/^ *//' | sed 's/ *$//' | sed '/^\s*$/d' | sort | uniq | tr '\n' ',' | sed 's/,/, /g')
     genres=${tmp_genres%, }
 
     # Get the movie artworks

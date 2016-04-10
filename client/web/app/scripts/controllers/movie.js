@@ -12,4 +12,17 @@ angular.module('myMDApp')
     var id = $routeParams.id;
 
     $scope.movie = $firebaseObject(Ref.child('movies/'+id));
+
+    $scope.movie.$loaded()
+      .then(function(movie){
+        movie.artwork = encodeURI(movie.artwork);
+      })
+      .catch(alert);
+
+    function alert(msg) {
+      $scope.err = msg;
+      $timeout(function() {
+        $scope.err = null;
+      }, 5000);
+    }
   });

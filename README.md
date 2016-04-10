@@ -4,11 +4,11 @@ My Movies Dashboard is a web application with my private collection of movies. T
 
 ## Development
 
-The application is encapsulated in a Vagrant box or a Docker container. 
+The application is encapsulated in a Vagrant box or a Docker container. It is possible to start or continue the development in any of them.
 
 ### Vagrant
 
-To start up the development with Vagrant you need to have Vagrant and VirtualBox installed. The clone the repository, build the Vagrant box and login into it.
+To start the development with Vagrant you need to have Vagrant and VirtualBox installed. The clone the repository, build the Vagrant box and login into it.
 
 ```
 git clone git@github.com:johandry/MyMD.git
@@ -26,12 +26,12 @@ yo
 ```
 Select the application type you will develop (i.e. angular) and Yeoman will create everything. In case of angular you may select everything but using Sass.
 
-Execute the vagrant/puppet provisioning again in your host to fix the Gruntfile.js. 
+Execute the vagrant/puppet provisioning again in your host to fix the Gruntfile.js.
 
 ```
 vagrant provision
 ```
-In the vagrant box now you can run the server to watch the application and see every change you do in the code. You can code in your host 
+In the vagrant box now you can run the server to watch the application and see every change you do in the code. You can code in your host
 
 ```
 vagrant ssh
@@ -64,7 +64,7 @@ Go to the Vagrant box and run:
 vagrant ssh
 cd ~/workspace/src
 grunt
-``` 
+```
 The production code is ready in ~/workspace/dist. This will will be in the ~/workspace later.
 
 ##Clean Up
