@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "moviesDB"
+
+MoviesDB.create("/Users/johandry/Workspace/MyMD/server/ruby/config.yaml")

@@ -1,0 +1,23 @@
+---
+
+:host: 192.168.0.35
+:verbose: false
+
+:movies:
+  - '/Volumes/Media Center/Shared iTunes/iTunes Media/Movies'
+  - '/Volumes/Backup01/Movies (Not in iTunes)'
+
+:backups:
+  - '/Volumes/Backup01/iTunes Media/Movies'
+
+:sources:
+  - '/Volumes/Time Machine/Source Media/Movies/BR'
+  - '/Volumes/Time Machine/Source Media/Movies/DVD'
+  - '/Volumes/Time Machine/Source Media/Movies/Kids & Family'
+
+:output_formats:
+  - json
+  - yaml
+
+# :subler: /usr/local/bin/SublerCLI
+# :atomicparsley: /usr/local/bin/AtomicParsley
