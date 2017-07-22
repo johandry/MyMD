@@ -1,51 +1,31 @@
-# My Movies Dashboard (MyMD)
+# Web
 
-My Movies Dashboard consists of two parts: Server and Client. The Server will collect all my movies data and store it in a database. The Client will use the this database to view, filter and query the movies information in a web page, mobile or desktop.
+This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.26.
 
+## Development server
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+## Code scaffolding
 
-## Build & Development
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
 
-This project was generated with [yo angularfire generator](https://github.com/firebase/generator-angularfire) version 1.0.0.
+## Build
 
-Run `grunt` for building and `grunt serve` for preview.
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
-### Fix and Workarounds
+## Running unit tests
 
-* __Missing modules__: The following modules need to be installed:
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-```
-npm install --save-dev jasmine-core karma phantomjs karma-jasmine karma-phantomjs-launcher grunt-karma
-```
+## Running end-to-end tests
 
-* __Fatal error: Cannot read property 'contents' of undefined__: Upgrade imagemin in module grunt-contrib-imagemin
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Before running the tests make sure you are serving the app via `ng serve`.
 
-```
-cd node_modules/grunt-contrib-imagemin
-npm install imagemin@4.0.0
-```
+## Deploying to GitHub Pages
 
-* __Broken style__: Due to change in bower specs Bootstrap is not loading right. Add this to bower.json
+Run `ng github-pages:deploy` to deploy to GitHub Pages.
 
-```
-  "overrides": {
-    "bootstrap": {
-      "main": [
-        "dist/css/bootstrap.css",
-        "dist/js/bootstrap.js",
-        "less/bootstrap.less"
-      ]
-    }
-  }
-```
+## Further help
 
-## Testing
-
-Running `grunt test` will run the unit tests with karma.
-
-## Source
-
-* http://markshust.com/2014/09/18/getting-started-yeoman-angular-firebase-angularfire-part-one
-* https://github.com/gruntjs/grunt-contrib-imagemin/issues/330
-* https://github.com/firebase/generator-angularfire/issues/59
-
+To get more help on the `angular-cli` use `ng help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
